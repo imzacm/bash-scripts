@@ -1,0 +1,62 @@
+#! /bin/bash
+
+if [[ $# -eq 0 ]] || (( $# % 2 != 0 )) ; then
+	echo "Usage: git-init <--remote> <--remotename> <--commit> <--branch>"
+	echo "-r --remote <remote url>"
+	echo "-R --remotename <remote name>"
+	echo "-c --commit <first commit>"
+	echo "-b --branch <branch>"
+else
+
+	REMOTENAME="origin"
+	BRANCH="master"
+	COMMIT="first"
+	REMOTE="unused"
+
+	while [[ $# > 1 ]]
+	do
+	key="$1"
+
+	case $key in
+    	-r|--remote)
+    	REMOTE="$2"
+    	shift # past argument
+    	;;
+		-b|--branch)
+    	BRANCH="$2"
+    	shift # past argument
+    	;;
+    	-c|--commit)
+    	COMMIT="$2"
+    	shift # past argument
+    	;;
+    	-R|--remotename)
+    	REMOTENAME="$2"
+    	shift # past argument
+    	;;
+	esac
+	shift # past argument or value
+	done
+	
+	if [ $REMOTE == "unused" ] ; then
+		echo "Usage: git-init <--remote> <--remotename> <--commit> <--branch>"
+		echo "-r --remote <remote url>"
+		echo "-R --remotename <remote name>"
+		echo "-c --commit <first commit>"
+		echo "-b --branch <branch>"
+		exit
+	fi
+
+	if curl --output /dev/null --silent --head --fail "$REMOTE"; then
+		echo "Remote is valid"
+	else
+		echo "Remote is not valid"
+		exit
+	fi
+
+	git init
+	git add .
+	git commit -m "$COMMIT"
+	git remote add "$REMOTENAME" "$REMOTE"
+	git push "$REMOTENAME" "$BRANCH"
+fi

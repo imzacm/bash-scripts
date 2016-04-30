@@ -1,0 +1,24 @@
+#! /bin/bash
+if [[ $# != 4 ]] ; then
+	echo "Usage: symlink <target> <shortcut>"
+	echo "-t --target <target>"
+	echo "-s --shortcut <shortcut>"
+else
+	while [[ $# > 1 ]]
+	do
+	key="$1"
+
+	case $key in
+    	-t|--target)
+    	TARGET="$2"
+    	shift # past argument
+    	;;
+		-s|--shortcut)
+    	SHORTCUT="$2"
+    	shift # past argument
+    	;;
+	esac
+	shift # past argument or value
+	done
+	ln -s "$TARGET" "$SHORTCUT"
+fi
